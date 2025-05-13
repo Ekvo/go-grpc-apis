@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package user.v1;
+
+option go_package = "github.com/Ekvo/go-postgres-apis/user/v1";
+
+// User model
+message User {
+  uint64 id = 1;
+  string login = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string email = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+// UserRegister API
+message UserRegisterRequest {
+  string login = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string password = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+message UserRegisterResponse {
+  uint64 user_id = 1;
+}
+
+// UserLogin API
+message UserLoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message UserLoginResponse {
+  string token = 1;
+}
+
+// UserData API (token take from metadata)
+message UserDataRequest{
+}
+
+message UserDataResponse {
+  User user = 1;
+}
+
+// UserUpdate API
+message UserUpdateRequest {
+  string login = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string password = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message UserUpdateResponse {
+}
+
+// UserDelete API
+message UserDeleteRequest {
+}
+
+message UserDeleteResponse{
+}
+
+service UserService {
+  rpc UserRegister(UserRegisterRequest) returns (UserRegisterResponse);
+
+  rpc UserLogin(UserLoginRequest) returns (UserLoginResponse);
+
+  // UserData, UserUpdate, UserDelete - get 'user_id' from metadata -H "authorization"
+
+  // by 'user_id' find 'User' in 'db'
+  rpc UserData(UserDataRequest) returns (UserDataResponse);
+
+  // by 'user_id' find 'User' in 'db'
+  // if found -> set empty 'User' fields with old User data from 'db' -> Update
+  rpc UserUpdate(UserUpdateRequest) returns (UserUpdateResponse);
+
+  rpc UserDelete(UserDeleteRequest) returns (UserDeleteResponse);
+}
