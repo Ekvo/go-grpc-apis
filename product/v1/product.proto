@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package product.v1;
+
+option go_package = "github.com/Ekvo/go-postgres-apis/product/v1";
+
+message Product {
+  string id = 1;
+  string owner_id = 2;
+  string name = 3;
+  string description = 4;
+  int32 quantity = 5;
+  int32 unit_price_cents = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message CreateProductRequest {
+  string owner_id = 1;
+  string name = 2;
+  string description = 3;
+  int32 quantity = 4;
+  int32 unit_price_cents = 5;
+}
+
+message CreateProductResponse {
+  Product product = 1;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}
+
+message ListProductRequest {
+  int32 limit = 1;
+  string sort_order = 2; // Optional. Sort direction: "ASC" for ascending, "DESC" for descending. Defaults to "ASC".
+  google.protobuf.Timestamp updated_at = 3;
+}
+
+message ListProductResponse {
+  repeated Product products = 1;
+}
+
+message UpdateProductRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  int32 quantity = 4;
+  int32 unit_price_cents = 5;
+}
+
+message UpdateProductResponse {
+  Product product = 1;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+
+message DeleteProductResponse {
+  bool success = 1;
+}
+
+service ProductService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse); // Creates a new product
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);           // Retrieves a product by ID
+  rpc ListProducts(ListProductRequest) returns (ListProductResponse);       // Lists products
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);  // Updates an existing product
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);  // Deletes a product by ID
+}
